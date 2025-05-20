@@ -1,5 +1,6 @@
 package com.yunmeng.ui;
 
+import Account.Account;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -8,7 +9,6 @@ import java.util.Random;
 
 public class registerJFrame extends JFrame implements MouseListener {
 
-    tools accountManage=new tools();
 
     JTextField user=new JTextField();
     JPasswordField password=new JPasswordField();
@@ -165,27 +165,36 @@ public class registerJFrame extends JFrame implements MouseListener {
         Object obj=e.getSource();
         if(obj==res){
             res.setIcon(new ImageIcon("image/register/注册按下.png"));
-
+            //注册逻辑
             String userName=user.getText();
-            char []passwordData=password.getPassword();
-            char []rePasswordData=rePassword.getPassword();
-            String pas1=new String(passwordData);
-            String pas2=new String(rePasswordData);
-            String str=check.getText();
-            String checkCodeData=str.replaceAll(" ", "");
-            if(pas1.equals(pas2)&&checkCodeData.equals(checkCode)){
-                if(accountManage.addAccount(this,userName,pas1)){
+            String userPassword=new String(password.getPassword());
+            String reUserPassword=new String(rePassword.getPassword());
+            boolean checkData=false;
+            if(userName.isEmpty()){
+                JOptionPane.showMessageDialog(this, "用户名不能为空！", "警告", JOptionPane.WARNING_MESSAGE);
+            }else if(userPassword.isEmpty()){
+                JOptionPane.showMessageDialog(this, "密码不能为空！", "警告", JOptionPane.WARNING_MESSAGE);
+            }else if(reUserPassword.isEmpty()){
+                JOptionPane.showMessageDialog(this, "重复密码不能为空！", "警告", JOptionPane.WARNING_MESSAGE);
+            }else{
+                //没有空指针的情况
+                if(userPassword.equals(reUserPassword)){
+                    checkData=true;
+                }else{
+                    JOptionPane.showMessageDialog(this, "两次输入密码不一致！", "警告", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+            if(checkData){
+                System.out.println("看看我有没有创建账户");
+                Account a = new Account(userName,userPassword);
+                //确定用户不存在再添加到数据库
+                if(a.exist(a,this)){
+                    a.saveAccount(a);
                     this.setVisible(false);
                     new loginJFrame();
+                }else {
+                    JOptionPane.showMessageDialog(this, "用户已经存在！", "警告", JOptionPane.WARNING_MESSAGE);
                 }
-
-            }else {
-               if(!pas1.equals(pas2))  {
-                   JOptionPane.showMessageDialog(this, "两次输入密码不一致!", "警告", JOptionPane.WARNING_MESSAGE);
-               }
-               else if (!checkCodeData.equals(checkCode)) {
-                   JOptionPane.showMessageDialog(this, "验证码不正确!", "警告", JOptionPane.WARNING_MESSAGE);
-               }
             }
 
         } else if (obj==reSet) {

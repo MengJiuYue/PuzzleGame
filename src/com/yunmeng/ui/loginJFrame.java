@@ -1,14 +1,12 @@
 package com.yunmeng.ui;
+import Account.Account;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 
 public class loginJFrame extends JFrame implements MouseListener {
-
-    tools accountManage = new tools();
 
     JTextField user=new JTextField();
     JPasswordField password=new JPasswordField();
@@ -30,7 +28,6 @@ public class loginJFrame extends JFrame implements MouseListener {
         this.setLayout(null);
         this.addMouseListener(this);
         img();
-        accountManage.loadData();
         this.setVisible(true);
     }
     private void img(){
@@ -92,22 +89,29 @@ public class loginJFrame extends JFrame implements MouseListener {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            //登录逻辑------------------------------------------------------------
             String userName = user.getText();
-            char[] passwordData = password.getPassword();
-            boolean flag = accountManage.checkAccount(this, userName, passwordData); // 传递当前JFrame作为父组件
+            String userPassword= new String(password.getPassword());
+            Account a = new Account(userName,userPassword);
+            boolean flag=a.checkAccount(a,this);
+             // 传递当前JFrame作为父组件
             if (flag) {
                 loginJFrame.this.setVisible(false);
                 new GameJFrame();
+            }else{
+                JOptionPane.showMessageDialog(this, "密码错误！", "警告", JOptionPane.WARNING_MESSAGE);
             }
             System.out.println("登录按下");
         } else if (obj == res) {
             try {
+                //跳转到注册页面
                 res.setIcon(new ImageIcon("image/login/注册按下.png"));
                 this.setVisible(false);
                 new registerJFrame();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            //控制云运行提示
             System.out.println("注册按下");
         }
     }
