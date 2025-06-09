@@ -1,5 +1,5 @@
 package com.yunmeng.ui;
-import Account.Account;
+import AccountServe.Account;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -97,7 +97,7 @@ public class loginJFrame extends JFrame implements MouseListener {
              // 传递当前JFrame作为父组件
             if (flag) {
                 loginJFrame.this.setVisible(false);
-                new GameJFrame();
+                new GameJFrame(a);
             }else{
                 JOptionPane.showMessageDialog(this, "密码错误！", "警告", JOptionPane.WARNING_MESSAGE);
             }

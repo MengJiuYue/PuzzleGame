@@ -1,21 +1,27 @@
 package com.yunmeng.ui;
 
+import AccountServe.AS;
+import AccountServe.Account;
+
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 public class GameJFrame extends JFrame implements KeyListener, ActionListener {
-
-    private static String ALL_PATH="all.jpg";
-    private static String WIN_PATH="image/win.png";
+    private Account currentAccount;
+    private final static String  ALL_PATH="all.jpg";
+    private final static String WIN_PATH="image/win.png";
      int x;
      int y;
     int[][] imgIndex = initializeImgIndex();
     int step=0;
+    ArrayList<Integer> gameData;
     String kind="animal";
     private static String PATH="image/animal/animal3/";
     JMenuItem replay=new JMenuItem("重新游戏");
@@ -29,7 +35,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     JMenuItem sport=new JMenuItem("运动");
 
 
-    public GameJFrame(){
+    public GameJFrame(Account a){
         setJFrame();
 
         setBar();
@@ -38,14 +44,14 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
 
         //显示界面`
         this.setVisible(true);
+        this.currentAccount=a;
     }
-
     private void initializeImg() {
         this.getContentPane().removeAll();
         //加载图片
         for (int i = 0; i < 4; i++) {
             for(int j=0;j<4;j++){
-                JLabel label=new JLabel(new ImageIcon(PATH+imgIndex[i][j]+".jpg"));
+                JLabel label=new JLabel(new ImageIcon(STR."\{PATH}\{imgIndex[i][j]}.jpg"));
                 label.setBounds(105*j+83,105*i+134,105,105);
                 label.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 this.add(label);
@@ -55,10 +61,24 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         JLabel background=new JLabel( new ImageIcon("image/background.png"));
         background.setBounds(40,40,500,560);
         this.add(background);
+        //玩家数据
+        JLabel stepCount=new JLabel(STR."步数:\{step}");
+        stepCount.setBounds(50,30,40,20);
+        this.add(stepCount);
 
-        JLabel count=new JLabel("步数:"+step);
-        count.setBounds(50,30,100,20);
+        gameData=AS.loadGameDataFromMySql(currentAccount);
+        //mysql游戏数据
+        JLabel avgStep=new JLabel(STR."每局平均步数:\{gameData.get(0)}");
+        avgStep.setBounds(380,30,100,20);
+        this.add(avgStep);
+
+        JLabel count=new JLabel(STR."完成局数:\{gameData.get(1)}");
+        count.setBounds(100,30,100,20);
         this.add(count);
+
+        JLabel stepRank=new JLabel(STR."平均步数排名:\{step}");
+        stepRank.setBounds(480,30,100,20);
+        this.add(stepRank);
 
         this.getContentPane().repaint();
     }
@@ -232,7 +252,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
                 }
             }
             x=3;y=3;
-            initializeImg();;
+            initializeImg();
         }
     }
 
@@ -273,7 +293,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     private void changeImg(String kind) {
         this.kind=kind;
         int Index=getImgIndex(kind);
-        PATH="image/"+kind+"/"+kind+Index+"/";
+        PATH= STR."image/\{kind}/\{kind}\{Index}/";
         step=0;
         imgIndex = initializeImgIndex();
         initializeImg();
@@ -297,5 +317,9 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         }
         Random r=new Random();
         return r.nextInt(kinds[0],kinds[1]);
+    }
+
+    public static Account getAccount( Account a){
+        return a;
     }
 }
