@@ -2,6 +2,7 @@ package AccountServe;
 import javax.swing.*;
 import java.util.*;
 import java.sql.*;
+
 public class AS implements AccountServe {
     private static final String DB_URL = "jdbc:mysql://localhost:3306/javaData";//数据库本地连接地址
     private static final String DB_USER = "root";//访问用户名
@@ -9,17 +10,19 @@ public class AS implements AccountServe {
     Map<String,String> users = loadAccountsFromMySql();
     //保存新用户到数据库
     @Override
-    public void saveAccount(Account a) {
-        String sql = "INSERT INTO accounts (userName, password) VALUES (?, ?)";//mysql语句
+    public boolean saveAccount(Account a) {
+        String sql = "INSERT INTO accounts  VALUES (?, ?,0,0)";//mysql语句
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, a.getUserName());//插入用户名
             pstmt.setString(2, a.getPassword());//插入密码
             pstmt.executeUpdate();
             System.out.println("New record created successfully");
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Error while inserting data");
+            return false;
         }
     }
     //账户校验

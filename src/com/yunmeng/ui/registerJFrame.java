@@ -188,10 +188,15 @@ public class registerJFrame extends JFrame implements MouseListener {
                 System.out.println("看看我有没有创建账户");
                 Account a = new Account(userName,userPassword);
                 //确定用户不存在再添加到数据库
-                if(a.exist(a,this)){
-                    a.saveAccount(a);
-                    this.setVisible(false);
-                    new loginJFrame();
+                if(!a.exist(a,this)){
+                   boolean flag= a.saveAccount(a);
+                   if(flag) { //添加账号的时候程序与数据库的返回情况
+                       JOptionPane.showMessageDialog(this, "用户注册成功！", "提示", JOptionPane.INFORMATION_MESSAGE);
+                       this.setVisible(false);
+                       new loginJFrame();
+                   }else{//账户添加到mysql异常
+                       JOptionPane.showMessageDialog(this, "程序异常！", "警告", JOptionPane.WARNING_MESSAGE);
+                   }
                 }else {
                     JOptionPane.showMessageDialog(this, "用户已经存在！", "警告", JOptionPane.WARNING_MESSAGE);
                 }

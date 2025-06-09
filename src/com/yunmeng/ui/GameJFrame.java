@@ -1,34 +1,36 @@
 package com.yunmeng.ui;
 
-import AccountServe.AS;
-import AccountServe.Account;
-
+import java.sql.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.Random;
+import java.awt.event.*;
+import AccountServe.Account;
+import Log.LS;
 
 public class GameJFrame extends JFrame implements KeyListener, ActionListener {
-    private Account currentAccount;
+    final static String DB_URL="jdbc:mysql://localhost:3306/javaData";
+    final static String DB_USER="root";
+    final static String DB_PASSWORD="Yc104121.";
+
     private final static String  ALL_PATH="all.jpg";
-    private final static String WIN_PATH="image/win.png";
+    private final static String  WIN_PATH="image/win.png";
+
      int x;
      int y;
     int[][] imgIndex = initializeImgIndex();
     int step=0;
-    ArrayList<Integer> gameData;
+    static int [] gameData = {1,1};
+
     String kind="animal";
     private static String PATH="image/animal/animal3/";
+    Account nowAccount;
+
     JMenuItem replay=new JMenuItem("重新游戏");
     JMenuItem relogin=new JMenuItem("重新登录");
     JMenuItem closeGame=new JMenuItem("关闭游戏");
     JMenu about=new JMenu("关于我们");
-    JMenuItem QQ=new JMenuItem("QQ");
+    JMenuItem aboutWe=new JMenuItem("关于我们");
     JMenu change=new JMenu("更换图片");
     JMenuItem girl=new JMenuItem("美女");
     JMenuItem animal=new JMenuItem("动物");
@@ -36,17 +38,22 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
 
 
     public GameJFrame(Account a){
+        nowAccount=a;
+
         setJFrame();
 
         setBar();
 
-        initializeImg();
+        loadGameData(gameData,nowAccount);
+        initializeGameData();
+
+        System.out.println("当前账户"+nowAccount.getUserName()+" "+nowAccount.getPassword());
 
         //显示界面`
         this.setVisible(true);
-        this.currentAccount=a;
     }
-    private void initializeImg() {
+
+    private void initializeGameData() {
         this.getContentPane().removeAll();
         //加载图片
         for (int i = 0; i < 4; i++) {
@@ -63,20 +70,19 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         this.add(background);
         //玩家数据
         JLabel stepCount=new JLabel(STR."步数:\{step}");
-        stepCount.setBounds(50,30,40,20);
+        stepCount.setBounds(50,30,50,20);
         this.add(stepCount);
 
-        gameData=AS.loadGameDataFromMySql(currentAccount);
-        //mysql游戏数据
-        JLabel avgStep=new JLabel(STR."每局平均步数:\{gameData.get(0)}");
+        /* mysql游戏数据 */
+        JLabel avgStep=new JLabel(STR."每局平均步数:\{gameData[0]}");
         avgStep.setBounds(380,30,100,20);
         this.add(avgStep);
 
-        JLabel count=new JLabel(STR."完成局数:\{gameData.get(1)}");
+        JLabel count=new JLabel(STR."完成局数:\{gameData[1]}");
         count.setBounds(100,30,100,20);
         this.add(count);
 
-        JLabel stepRank=new JLabel(STR."平均步数排名:\{step}");
+        JLabel stepRank=new JLabel(STR."平均步数排名:\{getRank()}");
         stepRank.setBounds(480,30,100,20);
         this.add(stepRank);
 
@@ -119,7 +125,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         change.add(animal);
         change.add(girl);
         change.add(sport);
-        about.add(QQ);
+        about.add(aboutWe);
 
         bar.add(function);
         bar.add(about);
@@ -129,7 +135,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         replay.addActionListener(this);
         relogin.addActionListener(this);
         closeGame.addActionListener(this);
-        QQ.addActionListener(this);
+        aboutWe.addActionListener(this);
         animal.addActionListener(this);
         girl.addActionListener(this);
         sport.addActionListener(this);
@@ -160,7 +166,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
                 if(y+1<4){
                     imgIndex[x][y]=imgIndex[x][++y];
                     imgIndex[x][y]=0;
-                    initializeImg();
+                    initializeGameData();
                     System.out.println("左");
                 }
 
@@ -171,7 +177,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
                 if(x+1<4){
                     imgIndex[x][y]=imgIndex[++x][y];
                     imgIndex[x][y]=0;
-                    initializeImg();
+                    initializeGameData();
                     System.out.println("上");
                 }
             }
@@ -181,7 +187,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
                 if(y-1>=0){
                     imgIndex[x][y]=imgIndex[x][--y];
                     imgIndex[x][y]=0;
-                    initializeImg();
+                    initializeGameData();
                     System.out.println("右");
                 }
             }
@@ -191,7 +197,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
                 if(x-1>=0){
                     imgIndex[x][y]=imgIndex[--x][y];
                     imgIndex[x][y]=0;
-                    initializeImg();
+                    initializeGameData();
                     System.out.println("下");
                 }
             }
@@ -199,8 +205,11 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
             default:
                 break;
         }
-        if(select>=37&&select<=40) step++;
-        if(checkWin(imgIndex)) showNewImg(false,WIN_PATH,203,283,197,73);
+        if(select>=37&&select<=40) step++;//步数计数
+        if(checkWin(imgIndex)) {
+            //显示胜利图片
+            showNewImg(false,WIN_PATH,203,283,197,73);
+        }
     }
 
     private boolean checkWin(int [][]data){
@@ -242,34 +251,43 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyCode()==65) initializeImg();
+        if(e.getKeyCode()==65) initializeGameData();
         if (e.getKeyCode()==87){
-            int num=1;
-            for (int i = 0; i < 4; i++) {
-                for(int j=0;j<4;j++){
-                    if(num<16)imgIndex[i][j]=num++;
-                    else imgIndex[i][j]=0;
+            //非开发用户无权限一键胜利
+            if("test".equals(nowAccount.getUserName())){
+                int num=1;
+                for (int i = 0; i < 4; i++) {
+                    for(int j=0;j<4;j++){
+                        if(num<16) imgIndex[i][j]=num++;
+                        else imgIndex[i][j]=0;
+                    }
                 }
+                x=3;y=3;
+                initializeGameData();
+            }else{
+                JOptionPane.showMessageDialog(this, "非开发人员无操作权限！", "警告", JOptionPane.WARNING_MESSAGE);
             }
-            x=3;y=3;
-            initializeImg();
         }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         Object item=e.getSource();
-        if(item==replay){
+        if(item==replay){//重新游戏
+            upGameData(step);
             step=0;
             imgIndex = initializeImgIndex();
-            initializeImg();
-
+            loadGameData(gameData,nowAccount);
+            initializeGameData();
         }else if(item==relogin){
             this.setVisible(false);
+            loadGameData(gameData,nowAccount);
+            initializeGameData();
             new loginJFrame();
         }else if(item==closeGame){
+            upGameData(step);
             System.exit(0);
-        }else if(item==QQ){
+        }else if(item==aboutWe){
             JDialog jdl=new JDialog();
             JLabel qq=new JLabel(new ImageIcon("image/about.png"));
             qq.setBounds(0,0,258,258);
@@ -296,7 +314,8 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         PATH= STR."image/\{kind}/\{kind}\{Index}/";
         step=0;
         imgIndex = initializeImgIndex();
-        initializeImg();
+        loadGameData(gameData,nowAccount);
+        initializeGameData();
     }
 
     private int getImgIndex(String kind){
@@ -319,7 +338,61 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         return r.nextInt(kinds[0],kinds[1]);
     }
 
-    public static Account getAccount( Account a){
-        return a;
+    private  void loadGameData(int []gameData,Account nowAccount){
+        try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD)){
+            String sql = "SELECT *FROM accounts WHERE userName = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1,nowAccount.getUserName());
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()){
+                gameData[0]=rs.getInt("avgStep");//avgStep
+                gameData[1]=rs.getInt("count");//count
+                System.out.println(gameData[0]+" "+gameData[1]);
+            }else {
+                LS.saveLog("游戏数据查询异常,异常账户"+nowAccount.getUserName());
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void upGameData(int step){
+        String sql="UPDATE accounts SET avgStep= ?,count= ? WHERE userName = ?";
+        int avgStep,count;
+        count=gameData[1]+1;
+        avgStep=(gameData[0]*gameData[1]+step)/count;
+
+        try(Connection conn = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD)){
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1,avgStep);
+            stmt.setInt(2,count);
+            stmt.setString(3,nowAccount.getUserName());
+            stmt.executeUpdate();
+            System.out.println("数据正常更新");
+    }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    private int getRank(){
+        String sql= """
+                select
+                    accounts.userName,
+                    rank() over (
+                    order by accounts.avgStep
+                    ) as 'rank'
+                from accounts;""";
+        try (Connection conn = DriverManager.getConnection(DB_URL,DB_USER,DB_PASSWORD)){
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()){
+                if(rs.getString("userName").equals(nowAccount.getUserName())){
+                    return rs.getInt("rank");
+                }
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return 0;
     }
 }
