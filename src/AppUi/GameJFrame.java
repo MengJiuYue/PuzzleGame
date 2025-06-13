@@ -14,7 +14,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     final static String DB_PASSWORD="Yc104121.";
 
     private final static String  ALL_PATH="all.jpg";
-    private final static String  WIN_PATH="image/win.png";
+    private final static String  WIN_PATH="/image/win.png";
 
      int x;
      int y;
@@ -23,7 +23,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     static int [] gameData = {1,1};
 
     String kind="animal";
-    private static String PATH="image/animal/animal3/";
+    private static String PATH="/image/animal/animal3/";
     Account nowAccount;
 
     JMenuItem replay=new JMenuItem("重新游戏");
@@ -58,14 +58,18 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
         //加载图片
         for (int i = 0; i < 4; i++) {
             for(int j=0;j<4;j++){
-                JLabel label=new JLabel(new ImageIcon(STR."\{PATH}\{imgIndex[i][j]}.jpg"));
+                if (imgIndex[i][j] == 0) {
+                    continue;
+                }
+                String imagePath = PATH +imgIndex[i][j]+ ".jpg";//STR."\{PATH}\{imgIndex[i][j]}.jpg"
+                JLabel label=new JLabel(new ImageIcon(getClass().getResource(imagePath)));
                 label.setBounds(105*j+83,105*i+134,105,105);
                 label.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 this.add(label);
             }
         }
         //添加背景
-        JLabel background=new JLabel( new ImageIcon("image/background.png"));
+        JLabel background=new JLabel( new ImageIcon(getClass().getResource("/image/background.png")));
         background.setBounds(40,40,500,560);
         this.add(background);
         //玩家数据
@@ -226,11 +230,11 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     private void showNewImg(boolean flag, String path,int x,int y,int w,int h){
         this.getContentPane().removeAll();
         //flag判断path是不是标准流格式图片,不是就直接路径
-        JLabel New=new JLabel(new ImageIcon(flag?PATH+path:path));
+        JLabel New=new JLabel(new ImageIcon(getClass().getResource(flag?PATH+path:path)));
         New.setBounds(x,y,w,h);
         this.add(New);
         //添加背景
-        JLabel background=new JLabel( new ImageIcon("image/background.png"));
+        JLabel background=new JLabel( new ImageIcon(getClass().getResource("/image/background.png")));
         background.setBounds(40,40,500,560);
         this.add(background);
         this.getContentPane().repaint();
@@ -289,7 +293,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
             System.exit(0);
         }else if(item==aboutWe){
             JDialog jdl=new JDialog();
-            JLabel qq=new JLabel(new ImageIcon("image/about.png"));
+            JLabel qq=new JLabel(new ImageIcon(getClass().getResource("/image/about.png")));
             qq.setBounds(0,0,258,258);
             jdl.getContentPane().add(qq);
             jdl.setSize(344,344);
@@ -311,7 +315,7 @@ public class GameJFrame extends JFrame implements KeyListener, ActionListener {
     private void changeImg(String kind) {
         this.kind=kind;
         int Index=getImgIndex(kind);
-        PATH= STR."image/\{kind}/\{kind}\{Index}/";
+        PATH= STR."/image/\{kind}/\{kind}\{Index}/";
         step=0;
         imgIndex = initializeImgIndex();
         loadGameData(gameData,nowAccount);

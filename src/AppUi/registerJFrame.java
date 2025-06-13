@@ -14,12 +14,12 @@ public class registerJFrame extends JFrame implements MouseListener {
     JPasswordField password=new JPasswordField();
     JPasswordField rePassword=new JPasswordField();
     JTextField check=new JTextField();
-    JLabel passwordShow=new JLabel(new ImageIcon("image/login/显示密码.png"));
-    JLabel passwordHidden=new JLabel(new ImageIcon("image/login/显示密码按下.png"));
-    JLabel rePasswordShow=new JLabel(new ImageIcon("image/login/显示密码.png"));
-    JLabel rePasswordHidden=new JLabel(new ImageIcon("image/login/显示密码按下.png"));
-    JLabel res=new JLabel(new ImageIcon("image/register/注册按钮.png"));
-    JLabel reSet=new JLabel(new ImageIcon("image/register/重置按钮.png"));
+    JLabel passwordShow=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码.png")));
+    JLabel passwordHidden=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码按下.png")));
+    JLabel rePasswordShow=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码.png")));
+    JLabel rePasswordHidden=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码按下.png")));
+    JLabel res=new JLabel(new ImageIcon(getClass().getResource("/image/register/注册按钮.png")));
+    JLabel reSet=new JLabel(new ImageIcon(getClass().getResource("/image/register/重置按钮.png")));
     JLabel checkLabel=new JLabel();
 
     private String checkCode;
@@ -66,17 +66,17 @@ public class registerJFrame extends JFrame implements MouseListener {
     }
     private void img(){
         user.setBounds(130,145,250,30);
-        JLabel userLabel=new JLabel(new ImageIcon("image/register/注册用户名.png"));
+        JLabel userLabel=new JLabel(new ImageIcon(getClass().getResource("/image/register/注册用户名.png")));
         userLabel.setBounds(35,150,79,17);
         this.add(user);
         this.add(userLabel);
 
         password.setBounds(130,185,250,30);
-        JLabel passwordLabel=new JLabel(new ImageIcon("image/register/注册密码.png"));
+        JLabel passwordLabel=new JLabel(new ImageIcon(getClass().getResource("/image/register/注册密码.png")));
         passwordLabel.setBounds(40,190,64,16);
 
         rePassword.setBounds(130,225,250,30);
-        JLabel rePasswordLabel=new JLabel(new ImageIcon("image/register/再次输入密码.png"));
+        JLabel rePasswordLabel=new JLabel(new ImageIcon(getClass().getResource("/image/register/再次输入密码.png")));
         rePasswordLabel.setBounds(30,230,96,17);
 
         check.setBounds(165,264,200,44);
@@ -127,7 +127,7 @@ public class registerJFrame extends JFrame implements MouseListener {
         this.add(res);
         this.add(reSet);
         //添加背景
-        JLabel background=new JLabel( new ImageIcon("image/register/background.png"));
+        JLabel background=new JLabel( new ImageIcon(getClass().getResource("/image/register/background.png")));
         background.setBounds(5,40,470,390);
         this.add(background);
 
@@ -164,7 +164,7 @@ public class registerJFrame extends JFrame implements MouseListener {
     public void mousePressed(MouseEvent e) {
         Object obj=e.getSource();
         if(obj==res){
-            res.setIcon(new ImageIcon("image/register/注册按下.png"));
+            res.setIcon(new ImageIcon(getClass().getResource("/image/register/注册按下.png")));
             //注册逻辑
             String userName=user.getText();
             String userPassword=new String(password.getPassword());
@@ -203,7 +203,7 @@ public class registerJFrame extends JFrame implements MouseListener {
             }
 
         } else if (obj==reSet) {
-            reSet.setIcon(new ImageIcon("image/register/重置按下.png"));
+            reSet.setIcon(new ImageIcon(getClass().getResource("/image/register/重置按下.png")));
             user.setText("");
             password.setText("");
             rePassword.setText("");
@@ -215,9 +215,9 @@ public class registerJFrame extends JFrame implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         Object obj=e.getSource();
         if (obj==res) {
-            res.setIcon(new ImageIcon("image/register/注册按钮.png"));
+            res.setIcon(new ImageIcon(getClass().getResource("/image/register/注册按钮.png")));
         } else if (obj == reSet) {
-            reSet.setIcon(new ImageIcon("image/register/重置按钮.png"));
+            reSet.setIcon(new ImageIcon(getClass().getResource("/image/register/重置按钮.png")));
         }
     }
 

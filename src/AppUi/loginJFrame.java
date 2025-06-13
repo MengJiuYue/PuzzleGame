@@ -10,10 +10,10 @@ public class loginJFrame extends JFrame implements MouseListener {
 
     JTextField user=new JTextField();
     JPasswordField password=new JPasswordField();
-    JLabel passwordShow=new JLabel(new ImageIcon("image/login/显示密码.png"));
-    JLabel passwordHidden=new JLabel(new ImageIcon("image/login/显示密码按下.png"));
-    JLabel login=new JLabel(new ImageIcon("image/login/登录按钮.png"));
-    JLabel res=new JLabel(new ImageIcon("image/login/注册按钮.png"));
+    JLabel passwordShow=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码.png")));
+    JLabel passwordHidden=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码按下.png")));
+    JLabel login=new JLabel(new ImageIcon(getClass().getResource("/image/login/登录按钮.png")));
+    JLabel res=new JLabel(new ImageIcon(getClass().getResource("/image/login/注册按钮.png")));
 
     public loginJFrame(){
         this.setSize(488,430);
@@ -33,14 +33,14 @@ public class loginJFrame extends JFrame implements MouseListener {
     private void img(){
 
         user.setBounds(80,120,315,40);
-        JLabel userLabel=new JLabel(new ImageIcon("image/login/用户名.png"));
+        JLabel userLabel=new JLabel(new ImageIcon(getClass().getResource("/image/login/用户名.png")));
         userLabel.setBounds(25,130,47,17);
         this.add(user);
         this.add(userLabel);
 
 
         password.setBounds(80,185,315,40);
-        JLabel passwordLabel=new JLabel(new ImageIcon("image/login/密码.png"));
+        JLabel passwordLabel=new JLabel(new ImageIcon(getClass().getResource("/image/login/密码.png")));
         passwordLabel.setBounds(30,195,32,16);
         passwordShow.addMouseListener(this);
         passwordShow.setBounds(400,190,18,29);
@@ -59,7 +59,7 @@ public class loginJFrame extends JFrame implements MouseListener {
         res.setBounds(250,280,128,47);
         this.add(res);
         //添加背景
-        JLabel background=new JLabel( new ImageIcon("image/login/background.png"));
+        JLabel background=new JLabel( new ImageIcon(getClass().getResource("/image/login/background.png")));
         background.setBounds(5,10,470,390);
         this.add(background);
     }
@@ -85,7 +85,7 @@ public class loginJFrame extends JFrame implements MouseListener {
         Object obj = e.getSource();
         if (obj == login) {
             try {
-                login.setIcon(new ImageIcon("image/login/登录按下.png"));
+                login.setIcon(new ImageIcon(getClass().getResource("/image/login/登录按下.png")));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -105,7 +105,7 @@ public class loginJFrame extends JFrame implements MouseListener {
         } else if (obj == res) {
             try {
                 //跳转到注册页面
-                res.setIcon(new ImageIcon("image/login/注册按下.png"));
+                res.setIcon(new ImageIcon(getClass().getResource("/image/login/注册按下.png")));
                 this.setVisible(false);
                 new registerJFrame();
             } catch (Exception ex) {
@@ -120,10 +120,10 @@ public class loginJFrame extends JFrame implements MouseListener {
     public void mouseReleased(MouseEvent e) {
         Object obj=e.getSource();
         if (obj==login) {
-            login.setIcon(new ImageIcon("image/login/登录按钮.png"));
+            login.setIcon(new ImageIcon(getClass().getResource("/image/login/登录按钮.png")));
             System.out.println("登录恢复");
         } else if (obj == res) {
-            res.setIcon(new ImageIcon("image/login/注册按钮.png"));
+            res.setIcon(new ImageIcon(getClass().getResource("/image/login/注册按钮.png")));
             System.out.println("注册恢复");
         }
     }
