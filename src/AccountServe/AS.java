@@ -4,10 +4,30 @@ import java.util.*;
 import java.sql.*;
 
 public class AS implements AccountServe {
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/javaData";//数据库本地连接地址
-    private static final String DB_USER = "root";//访问用户名
-    private static final String DB_PASSWORD = "Yc104121.";//访问用户密码
+    private static final String DB_URL = "jdbc:h2:./data/game"; // 文件形式
+    private static final String DB_USER = "sa";
+    private static final String DB_PASSWORD = "";
+
     Map<String,String> users = loadAccountsFromMySql();
+
+    private void initDatabase() {
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             Statement stmt = conn.createStatement()) {
+            String sql = """
+                CREATE TABLE IF NOT EXISTS accounts (
+                    userName VARCHAR(255) PRIMARY KEY,
+                    password VARCHAR(255),
+                    avgStep INT DEFAULT 0,
+                    count INT DEFAULT 0
+                );
+                """;
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     //保存新用户到数据库
     @Override
     public boolean saveAccount(Account a) {
@@ -51,6 +71,7 @@ public class AS implements AccountServe {
 
     //加载用户数据到HashMap方便查找
     private HashMap<String,String> loadAccountsFromMySql() {
+        initDatabase();
         HashMap<String,String> resMap=new HashMap<>();
         String sql ="SELECT * FROM accounts";
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);

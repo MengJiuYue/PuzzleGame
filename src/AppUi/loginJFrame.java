@@ -94,6 +94,7 @@ public class loginJFrame extends JFrame implements MouseListener {
             String userPassword= new String(password.getPassword());
             Account a = new Account(userName,userPassword);
             boolean flag=a.checkAccount(a,this);
+
              // 传递当前JFrame作为父组件
             if (flag) {
                 loginJFrame.this.setVisible(false);

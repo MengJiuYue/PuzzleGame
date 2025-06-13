@@ -6,8 +6,9 @@
         <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="game" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../DevelopTool/h2-2024-08-11/h2/bin/h2-2.3.232.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../DevelopTool/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0.jar" path-in-jar="/" />
       <element id="dir-copy" path="$PROJECT_DIR$" />
-      <element id="file-copy" path="$PROJECT_DIR$/../../../DevelopTool/mysql-connector-j-9.3.0/mysql-connector-j-9.3.0.jar" />
     </root>
   </artifact>
 </component>
