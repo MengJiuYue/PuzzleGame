@@ -10,10 +10,10 @@ public class loginJFrame extends JFrame implements MouseListener {
 
     JTextField user=new JTextField();
     JPasswordField password=new JPasswordField();
-    JLabel passwordShow=new JLabel(new ImageIcon("image/login/显示密码.png"));
-    JLabel passwordHidden=new JLabel(new ImageIcon("image/login/显示密码按下.png"));
-    JLabel login=new JLabel(new ImageIcon("image/login/登录按钮.png"));
-    JLabel res=new JLabel(new ImageIcon("image/login/注册按钮.png"));
+    JLabel passwordShow=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码.png")));
+    JLabel passwordHidden=new JLabel(new ImageIcon(getClass().getResource("/image/login/显示密码按下.png")));
+    JLabel login=new JLabel(new ImageIcon(getClass().getResource("/image/login/登录按钮.png")));
+    JLabel res=new JLabel(new ImageIcon(getClass().getResource("/image/login/注册按钮.png")));
 
     public loginJFrame(){
         this.setSize(488,430);
